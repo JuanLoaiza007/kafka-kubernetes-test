@@ -1,10 +1,9 @@
-import os
 from fastapi import FastAPI
 from pydantic import BaseModel
 from confluent_kafka import Producer
 
-kafka_address = os.getenv("KAFKA_BOOSTRAP_SERVERS", "localhost:9092")
-topic_name = os.getenv("KAFKA_DEFAULT_TOPIC", "my-topic")
+kafka_address = "my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
+topic_name = "my-topic"
 
 print(f"kafka address is: {kafka_address}")
 print(f"topic is: {topic_name}")

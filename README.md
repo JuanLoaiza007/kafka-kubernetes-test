@@ -50,10 +50,22 @@ Run a producer in a shell:
 kubectl -n kafka run kafka-producer -ti --image=quay.io/strimzi/kafka:0.44.0-kafka-3.8.0 --rm=true --restart=Never -- bin/kafka-console-producer.sh --bootstrap-server my-cluster-kafka-bootstrap:9092 --topic my-topic
 ```
 
+To delete the kafka producer use:
+
+```bash
+kubectl -n kafka delete pod kafka-producer
+```
+
 ### Run a consumer
 
 Run a producer in a shell:
 
 ```bash
 kubectl -n kafka run kafka-consumer -ti --image=quay.io/strimzi/kafka:0.44.0-kafka-3.8.0 --rm=true --restart=Never -- bin/kafka-console-consumer.sh --bootstrap-server my-cluster-kafka-bootstrap:9092 --topic my-topic --from-beginning
+```
+
+To delete the kafka consumer use:
+
+```bash
+kubectl -n kafka delete pod kafka-consumer
 ```
