@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: producer-juan
+  namespace: kafka
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: producer-juan
+  template:
+    metadata:
+      labels:
+        app: producer-juan
+    spec:
+      containers:
+        - name: producer-juan
+          image: juanloaiza007/producer-juan:latest
+          ports:
+            - containerPort: 8000
+          env:
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: "my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
+            - name: KAFKA_DEFAULT_TOPIC
+              value: "my-topic"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: producer-juan-service
+spec:
+  selector:
+    app: producer-juan
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+      nodePort: 30090
+  type: NodePort
