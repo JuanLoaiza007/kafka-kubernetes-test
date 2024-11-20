@@ -1,0 +1,25 @@
+{
+  "name": "producer-julian",
+  "version": "1.0.0",
+  "description": "Kafka producer server using KafkaJS and Express",
+  "main": "producer-julian.js",
+  "scripts": {
+    "start": "node producer-julian.js",
+    "test": "echo \"No tests specified\" && exit 1"
+  },
+  "keywords": [
+    "kafka",
+    "producer",
+    "express",
+    "kafkajs",
+    "nodejs"
+  ],
+  "author": "Julian",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.1.4",
+    "express": "^4.18.2",
+    "kafkajs": "^2.2.4"
+  }
+}
+
