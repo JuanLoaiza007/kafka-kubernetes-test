@@ -1,12 +1,13 @@
 #!/bin/bash
 
 # Create a cluster with k3d
-k3d cluster create my-cluster -p "8000:30000@agent:1" -p "8001:30100@agent:2" --agents 8
+k3d cluster create my-cluster -p "8000:30000@agent:1" -p "8001:30100@agent:2" -p "8003:30300@agent:4" --agents 8
 
 kubectl label nodes k3d-my-cluster-server-0
 kubectl label nodes k3d-my-cluster-agent-0 strimzi.io/kind=Kafka
 kubectl label nodes k3d-my-cluster-agent-1 producer=juan
 kubectl label nodes k3d-my-cluster-agent-2 producer=herrera
+kubectl label nodes k3d-my-cluster-agent-4 producer=sebastian
 
 # Create a namespace for kafka
 kubectl create namespace kafka
@@ -40,3 +41,6 @@ kubectl apply -f ./producer-juan/producer-juan-deployment.yaml
 
 kubectl apply -f ./producer-herrera/producer-herrera-deployment.yaml
 # kubectl delete deployment -n "kafka"  producer-herrera-deployment
+
+kubectl apply -f ./producer-sebastian/producer-sebastian-deployment.yaml
+#kubectl delete deployment -n "kafka"  producer-sebastian-deployment
