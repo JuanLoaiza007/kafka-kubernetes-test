@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Create a cluster with k3d
-k3d cluster create my-cluster -p "8000:30000@agent:1" -p "8001:30100@agent:2" --agents 3
+k3d cluster create my-cluster -p "8000:30000@agent:1" -p "8001:30100@agent:2" --agents 8
 
 kubectl label nodes k3d-my-cluster-server-0
 kubectl label nodes k3d-my-cluster-agent-0 strimzi.io/kind=Kafka
