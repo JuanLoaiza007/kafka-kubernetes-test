@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: producer-juan-deployment
+  name: producer-julian-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: producer-juan
+      app: producer-julian
   template:
     metadata:
       labels:
-        app: producer-juan
+        app: producer-julian
     spec:
       affinity:
         nodeAffinity:
@@ -20,12 +20,12 @@ spec:
                   - key: producer
                     operator: In
                     values:
-                      - juan
+                      - julian
       containers:
-        - name: producer-juan-container
-          image: juanloaiza007/producer-juan:latest
+        - name: producer-julian-container
+          image: julianrc1/producer-julian:latest
           ports:
-            - containerPort: 8000
+            - containerPort: 4000
           env:
             - name: KAFKA_ADDRESS
               valueFrom:
@@ -42,13 +42,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: producer-juan-service
+  name: producer-julian-service
 spec:
   selector:
-    app: producer-juan
+    app: producer-julian
   ports:
     - protocol: TCP
-      port: 8000
-      targetPort: 8000
-      nodePort: 30000
+      port: 4000
+      targetPort: 4000
+      nodePort: 30400
   type: NodePort

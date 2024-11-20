@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: producer-juan-deployment
+  name: producer-sebastian-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: producer-juan
+      app: producer-sebastian
   template:
     metadata:
       labels:
-        app: producer-juan
+        app: producer-sebastian
     spec:
       affinity:
         nodeAffinity:
@@ -20,12 +20,12 @@ spec:
                   - key: producer
                     operator: In
                     values:
-                      - juan
+                      - sebastian
       containers:
-        - name: producer-juan-container
-          image: juanloaiza007/producer-juan:latest
+        - name: producer-sebastian-container
+          image: sebastianmr18/producer-sebastian:latest
           ports:
-            - containerPort: 8000
+            - containerPort: 8003
           env:
             - name: KAFKA_ADDRESS
               valueFrom:
@@ -37,18 +37,17 @@ spec:
                 secretKeyRef:
                   name: kafka-secret
                   key: topic_name
-
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: producer-juan-service
+  name: producer-sebastian-service
 spec:
   selector:
-    app: producer-juan
+    app: producer-sebastian
   ports:
     - protocol: TCP
-      port: 8000
-      targetPort: 8000
-      nodePort: 30000
+      port: 8003
+      targetPort: 8003
+      nodePort: 30300
   type: NodePort

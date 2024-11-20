@@ -3,8 +3,8 @@ from pydantic import BaseModel
 from confluent_kafka import Producer
 import os
 
-kafka_address = os.getenv("KAFKA_ADDRESS")
-topic_name = os.getenv("TOPIC_NAME")
+kafka_address = os.environ.get('KAFKA_ADDRESS')
+topic_name = os.environ.get('TOPIC_NAME')
 
 print(f"kafka address is: {kafka_address}")
 print(f"topic is: {topic_name}")
@@ -21,7 +21,7 @@ class Message(BaseModel):
     message: str
 
 
-@app.post("/produce")
+@app.post("/producer-sebastian")
 async def produce_message(payload: Message):
     topic = topic_name
     try:
