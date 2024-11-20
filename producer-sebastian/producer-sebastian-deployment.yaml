@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: producer-sebastian-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: producer-sebastian
+  template:
+    metadata:
+      labels:
+        app: producer-sebastian
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: producer
+                    operator: In
+                    values:
+                      - sebastian
+      containers:
+        - name: producer-sebastian-container
+          image: sebastianmr18/producer-sebastian:latest
+          ports:
+            - containerPort: 8003
+          env:
+            - name: KAFKA_ADDRESS
+              valueFrom:
+                secretKeyRef:
+                  name: kafka-secret
+                  key: kafka_address
+            - name: TOPIC_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: kafka-secret
+                  key: topic_name
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: producer-sebastian-service
+spec:
+  selector:
+    app: producer-sebastian
+  ports:
+    - protocol: TCP
+      port: 8003
+      targetPort: 8003
+      nodePort: 30300
+  type: NodePort
