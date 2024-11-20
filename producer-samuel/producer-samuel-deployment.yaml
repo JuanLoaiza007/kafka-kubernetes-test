@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: producer-samuel-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: producer-samuel
+  template:
+    metadata:
+      labels:
+        app: producer-samuel
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: producer
+                    operator: In
+                    values:
+                      - samuel
+      containers:
+        - name: producer-samuel-container
+          image: sakyjoestar/producer-samuel:latest
+          ports:
+            - containerPort: 5001
+          env:
+            - name: KAFKA_ADDRESS
+              valueFrom:
+                secretKeyRef:
+                  name: kafka-secret
+                  key: kafka_address
+            - name: TOPIC_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: kafka-secret
+                  key: topic_name
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: producer-samuel-service
+spec:
+  selector:
+    app: producer-samuel
+  ports:
+    - protocol: TCP
+      port: 5001
+      targetPort: 5001
+      nodePort: 30200
+  type: NodePort
