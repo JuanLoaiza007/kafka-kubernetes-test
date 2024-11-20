@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: producer-duque-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: producer-duque
+  template:
+    metadata:
+      labels:
+        app: producer-duque
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: producer
+                    operator: In
+                    values:
+                      - duque
+      containers:
+        - name: producer-duque-container
+          image: sduquec/producer-duque:latest
+          ports:
+            - containerPort: 8006
+          env:
+            - name: KAFKA_ADDRESS
+              valueFrom:
+                secretKeyRef:
+                  name: kafka-secret
+                  key: kafka_address
+            - name: TOPIC_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: kafka-secret
+                  key: topic_name
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: producer-duque-service
+spec:
+  selector:
+    app: producer-duque
+  ports:
+    - protocol: TCP
+      port: 8006
+      targetPort: 8006
+      nodePort: 30600
+  type: NodePort
