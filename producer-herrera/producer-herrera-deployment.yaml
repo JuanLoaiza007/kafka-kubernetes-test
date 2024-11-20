@@ -1,17 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: producer-juan-deployment
+  name: producer-herrera-deployment
   namespace: kafka
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: producer-juan
+      app: producer-herrera
   template:
     metadata:
       labels:
-        app: producer-juan
+        app: producer-herrera
     spec:
       affinity:
         nodeAffinity:
@@ -21,12 +21,12 @@ spec:
                   - key: producer
                     operator: In
                     values:
-                      - juan
+                      - herrera
       containers:
-        - name: producer-juan-container
-          image: juanloaiza007/producer-juan:latest
+        - name: producer-herrera-container
+          image: herreran/producer-herrera:latest
           ports:
-            - containerPort: 8000
+            - containerPort: 5000
           env:
             - name: KAFKA_ADDRESS
               valueFrom:
@@ -38,18 +38,17 @@ spec:
                 secretKeyRef:
                   name: kafka-secret
                   key: topic_name
-
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: producer-juan-service
+  name: producer-herrera-service
 spec:
   selector:
-    app: producer-juan
+    app: producer-herrera
   ports:
     - protocol: TCP
-      port: 8000
-      targetPort: 8000
-      nodePort: 30000
+      port: 5000
+      targetPort: 5000
+      nodePort: 30100
   type: NodePort

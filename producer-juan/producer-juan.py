@@ -1,9 +1,10 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from confluent_kafka import Producer
+import os
 
-kafka_address = "my-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
-topic_name = "my-topic"
+kafka_address = os.getenv("KAFKA_ADDRESS")
+topic_name = os.getenv("TOPIC_NAME")
 
 print(f"kafka address is: {kafka_address}")
 print(f"topic is: {topic_name}")

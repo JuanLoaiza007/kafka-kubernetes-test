@@ -1,7 +1,12 @@
 #!/bin/bash
 
 # Create a cluster with k3d
-k3d cluster create my-cluster --agents 1
+k3d cluster create my-cluster -p "8000:30000@agent:1" -p "8001:30100@agent:2" --agents 3
+
+kubectl label nodes k3d-my-cluster-server-0
+kubectl label nodes k3d-my-cluster-agent-0 strimzi.io/kind=Kafka
+kubectl label nodes k3d-my-cluster-agent-1 producer=juan
+kubectl label nodes k3d-my-cluster-agent-2 producer=herrera
 
 # Create a namespace for kafka
 kubectl create namespace kafka
@@ -10,6 +15,7 @@ kubectl create namespace kafka
 kubectl create -f 'https://strimzi.io/install/latest?namespace=kafka' -n kafka
 
 # ========= WAIT =========
+kubectl wait --for=condition=Available deployment/strimzi-cluster-operator -n kafka --timeout=120s
 # Check the status of the operator
 # kubectl get pod -n kafka
 # Check logs
@@ -21,11 +27,16 @@ kubectl apply -f ./kafka/kafka-deployment.yaml
 # kubectl delete -f ./kafka/kafka-deployment.yaml
 
 # ========= WAIT =========
+sleep 30
+kubectl wait --for=condition=Ready pods -l strimzi.io/kind=Kafka -n kafka --timeout=300s
 # Check the status of the operator
 # kubectl -n kafka get all 
 
+kubectl apply -f ./kafka/kafka-secret.yaml
+
 # Deploy producers
 kubectl apply -f ./producer-juan/producer-juan-deployment.yaml
-# kubectl delete -f ./producer-juan/producer-juan-deployment.yaml
+# kubectl delete deployment -n "kafka" producer-juan-deployment
 
-kubectl port-forward deployment/producer-juan-deployment 8000:8000 -n kafka
+kubectl apply -f ./producer-herrera/producer-herrera-deployment.yaml
+# kubectl delete deployment -n "kafka"  producer-herrera-deployment
