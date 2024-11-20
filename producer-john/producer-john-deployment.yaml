@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: producer-john-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: producer-john
+  template:
+    metadata:
+      labels:
+        app: producer-john
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: producer
+                    operator: In
+                    values:
+                      - john
+      containers:
+        - name: producer-john-container
+          image: johnfreddy/producer-john:latest
+          ports:
+            - containerPort: 5000
+          env:
+            - name: KAFKA_ADDRESS
+              valueFrom:
+                secretKeyRef:
+                  name: kafka-secret
+                  key: kafka_address
+            - name: TOPIC_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: kafka-secret
+                  key: topic_name
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: producer-john-service
+spec:
+  selector:
+    app: producer-john
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
+      nodePort: 30500
+  type: NodePort
